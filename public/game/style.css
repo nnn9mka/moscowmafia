@@ -1,0 +1,142 @@
+.card {
+    position: relative;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: flex;
+    -webkit-flex-direction: column;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid #edf2f9;
+    border-radius: .5rem
+}
+
+.card>hr {
+    margin-right: 0;
+    margin-left: 0
+}
+
+.card>.list-group {
+    border-top: inherit;
+    border-bottom: inherit
+}
+
+.card>.list-group:first-child {
+    border-top-width: 0;
+    border-top-left-radius: -webkit-calc(.5rem - 1px);
+    border-top-left-radius: calc(.5rem - 1px);
+    border-top-right-radius: -webkit-calc(.5rem - 1px);
+    border-top-right-radius: calc(.5rem - 1px)
+}
+
+.card>.list-group:last-child {
+    border-bottom-width: 0;
+    border-bottom-right-radius: -webkit-calc(.5rem - 1px);
+    border-bottom-right-radius: calc(.5rem - 1px);
+    border-bottom-left-radius: -webkit-calc(.5rem - 1px);
+    border-bottom-left-radius: calc(.5rem - 1px)
+}
+
+.card>.card-header+.list-group,.card>.list-group+.card-footer {
+    border-top: 0
+}
+
+.card-body {
+    -webkit-flex: 1 1 auto;
+    -moz-box-flex: 1;
+    flex: 1 1 auto;
+    padding: 1.5rem
+}
+
+.card-title {
+    margin-bottom: .5rem
+}
+
+.card-subtitle {
+    margin-top: -.25rem
+}
+
+.card-subtitle,.card-text:last-child {
+    margin-bottom: 0
+}
+
+.card-link+.card-link {
+    margin-left: 1.5rem
+}
+
+.card-header {
+    padding: 1rem 1.5rem;
+    margin-bottom: 0;
+    background-color: transparent;
+    border-bottom: 1px solid #edf2f9
+}
+
+.card-header:first-child {
+    border-radius: -webkit-calc(.5rem - 1px) -webkit-calc(.5rem - 1px) 0 0;
+    border-radius: calc(.5rem - 1px) calc(.5rem - 1px) 0 0
+}
+
+.card-footer {
+    padding: 1rem 1.5rem;
+    background-color: transparent;
+    border-top: 1px solid #edf2f9
+}
+
+.card-footer:last-child {
+    border-radius: 0 0 -webkit-calc(.5rem - 1px) -webkit-calc(.5rem - 1px);
+    border-radius: 0 0 calc(.5rem - 1px) calc(.5rem - 1px)
+}
+
+.card-header-tabs {
+    margin-right: -.75rem;
+    margin-bottom: -1rem;
+    margin-left: -.75rem;
+    border-bottom: 0
+}
+
+.card-header-tabs .nav-link.active {
+    background-color: #fff;
+    border-bottom-color: #fff
+}
+
+.card-header-pills {
+    margin-right: -.75rem;
+    margin-left: -.75rem
+}
+
+.card-img-overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 1.5rem;
+    border-radius: -webkit-calc(.5rem - 1px);
+    border-radius: calc(.5rem - 1px)
+}
+
+.card-img,.card-img-bottom,.card-img-top {
+    width: 100%
+}
+
+.card-img,.card-img-top {
+    border-top-left-radius: -webkit-calc(.5rem - 1px);
+    border-top-left-radius: calc(.5rem - 1px);
+    border-top-right-radius: -webkit-calc(.5rem - 1px);
+    border-top-right-radius: calc(.5rem - 1px)
+}
+
+.card-img,.card-img-bottom {
+    border-bottom-right-radius: -webkit-calc(.5rem - 1px);
+    border-bottom-right-radius: calc(.5rem - 1px);
+    border-bottom-left-radius: -webkit-calc(.5rem - 1px);
+    border-bottom-left-radius: calc(.5rem - 1px)
+}
+
+.card-group>.card {
+    margin-bottom: .75rem
+}

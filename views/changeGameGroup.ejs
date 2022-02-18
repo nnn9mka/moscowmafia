@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://kit.fontawesome.com/1d30ccb113.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/Calendar 04_files/A.style.css.pagespeed.cf.mxS9v7u0Y-.css">
+</head>
+<body>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+
+    <%- include("navigation",{href :`${href}`}) %>
+    <header style="max-width: 900px; max-height: 100%; overflow:auto; margin: 10px auto; padding: 0px 5px 0px 5px;">
+    <div class="tab-content border-bottom" id="myTabContent">
+        <div class="tab-pane fade show active mt-3 mb-3 p-1" id="home" role="tabpanel" aria-labelledby="home-tab">
+
+            <div class="d-flex justify-content-between mb-3">
+                <h5>Редактирование игрока</h5>
+                <button type="button" class="btn btn-danger" id="delete" data-id="<%= data.id %>">Удалить</button>
+            </div>
+            
+            <div class="input-group  mb-3">
+                <span class="input-group-text" id="inputGroup-sizing-sm">ФИО</span>
+                <input id="fullname" type="text" value="<%= data.fullname %>" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Номер телефона</span>
+                <input id="online_phone" name="phone" type="tel" maxlength="50"
+          required="required"
+         value="<%= data.phone%>"
+         pattern="\+7\s?[\(]{0,1}9[0-9]{2}[\)]{0,1}\s?\d{3}[-]{0,1}\d{2}[-]{0,1}\d{2}"
+         placeholder="+7(___)___-__-__" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Кол-во монет</span>
+                <input type="number" id="coins" value="<%= data.coins%>" min="0" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+            </div>
+
+            <div class="bottom-btn d-flex justify-content-between pl-3 pr-3">
+                <button type="button" class="btn btn-primary" id="exit">Отмена</button>
+                <button type="button" class="btn btn-success" id="save">Сохранить</button>
+            </div>
+        </div>
+    </header>
+    
+    <script>
+
+        $(document).ready(async function(){
+            $('#exit').click(()=>{
+                window.history.back();
+                
+            })
+            
+            document.querySelector('#online_phone').addEventListener('paste',(event)=>{
+                let paste = (event.clipboardData || window.clipboardData).getData('text');
+                paste = paste.replace(/\s|-/g,'');
+                if(paste.search(/[a-zA-Zа-яА-Я]/g) != -1){
+                    event.target.classList.add("is-invalid")
+                    event.target.value = '+7';
+                    return;
+                }
+
+                if(paste.length ==11 && paste[0] == '8'){
+                    paste = paste.substr(1);
+                    
+                }
+                if(paste.length ==12 && paste[0] == '+' && paste[1] == '7'){
+                    paste = paste.substr(2);
+                }
+                event.target.value = '+7'+paste;
+                event.target.classList.remove("is-invalid")
+                // console.log(paste);
+            });
+
+            $('#delete').click((e)=>{
+                let id = e.target.getAttribute('data-id')
+                fetch(`/timetable/delete/${id}`, {
+                    method:'DELETE',
+                })
+                window.history.back();
+            })
+
+
+            $('#save').click(()=>{
+                let id = document.location.pathname.split('/')
+                const coins = $('#coins').val();
+                const tel = $('#online_phone').val();
+                let fullname = $('#fullname').val().trim().replace(/[ ]{6,}/, ' ').toLowerCase();
+                if(tel.replace(/\D/g, "").length != 11 && fullname.length == 0 && (coins==0 || coins=='') ){
+                    $('#fullname').addClass('is-invalid')
+                    $('#online_phone').addClass('is-invalid')
+                    $('#coins').addClass('is-invalid')
+                    return;
+                }
+                if(fullname.length == 0 || fullname.split(' ').length == 1){
+                    $('#fullname').addClass('is-invalid')
+                    return;
+                }
+                if(tel.replace(/\D/g, "").length != 11){
+                    $('#online_phone').addClass('is-invalid')
+                    return;
+                }
+                if(coins==0 || coins==''){
+                    $('#coins').addClass('is-invalid')
+                    return;
+                }
+                fullname = fullname.split(' ').map(word => word[0].toUpperCase() + word.substring(1)).join(' ')
+
+                fetch(`/timetable/${id[id.length-1]}`, {
+                    method:'PUT',
+                    headers: {
+                        'Content-Type': 'application/json;charset=utf-8'
+                    },
+                    body:JSON.stringify({
+                        "fullname": fullname,
+                        "phone": tel,
+                        "coins": coins,
+                    })
+                })
+                window.history.back();
+                console.log([coins,tel,fullname]);
+            })
+        })
+
+        function setCursorPosition(pos, e) {
+          //e.focus();
+          if (e.setSelectionRange) e.setSelectionRange(pos, pos);
+          else if (e.createTextRange) {
+            var range = e.createTextRange();
+            range.collapse(true);
+            range.moveEnd("character", pos);
+            range.moveStart("character", pos);
+            range.select()
+          }
+        }
+      
+        function mask(e) {
+          //console.log('mask',e);
+          var matrix = this.placeholder,// .defaultValue
+              i = 0,
+              def = matrix.replace(/\D/g, ""),
+              val = this.value.replace(/\D/g, "");
+          def.length >= val.length && (val = def);
+          matrix = matrix.replace(/[_\d]/g, function(a) {
+            return val.charAt(i++) || "_"
+          });
+          this.value = matrix;
+          i = matrix.lastIndexOf(val.substr(-1));
+          i < matrix.length && matrix != this.placeholder ? i++ : i = matrix.indexOf("_");
+          setCursorPosition(i, this)
+        }
+        window.addEventListener("DOMContentLoaded", function() {
+          var input = document.querySelector("#online_phone");
+          input.addEventListener("input", mask, false);
+          //input.focus();
+          setCursorPosition(3, input);
+        });
+    </script>
+</body>
+</html>

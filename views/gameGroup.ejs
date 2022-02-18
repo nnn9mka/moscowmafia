@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://kit.fontawesome.com/1d30ccb113.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/Calendar 04_files/A.style.css.pagespeed.cf.mxS9v7u0Y-.css">
+    <style>
+        .btn-start{
+            color: #ffffff;
+            background-color: #7f31f5;
+            font-size: 1.3em;
+        }
+        .change{
+            color: #dd8f00;
+        }
+
+        .modal-body .chacked::before{
+        
+        content: '';
+        content: '';
+        width: 10px;
+        height: 10px;
+        background-color: var(--myvar);
+        position: absolute;
+        /* top: 0; */
+        /* display: flex; */
+        right: 10;
+        margin-right: 10px;
+        border-radius: 50%;
+        }
+        #metro_modal{
+        overflow: hidden;
+        }
+        .focusDate{
+            border: 2px #cd4dcc solid;
+        }
+        .modal-body{
+        background-color: #f5f5f5;
+        max-height: 50vh;
+        overflow: hidden;
+        padding: 0;
+        display: flex;
+        flex-flow: column nowrap;
+        }
+        .modal-body .chacked{
+        position: relative;
+        justify-content: end;
+        align-items: center;
+        display: flex;
+        --myvar:blue;
+        }
+        .modal-body .search{
+        
+        padding: 15px;
+        }
+
+        .list{
+        flex:1;
+        overflow: auto;
+        padding: 0px 15px 15px 15px;
+        }
+        .list .station{
+        display: flex;
+        align-items: center;
+        background: #fff;
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 12px;
+        }
+
+        .list .station:hover{
+        cursor: pointer;
+        background-color: #ebebeb;
+        }
+        .list .station div{
+        width: 10px;
+        height: 10px;
+        background-color: aqua;
+        border-radius: 50%;
+        margin-right: 10px;
+        }
+        .list .station:last-child{
+        margin-bottom: 0px;
+        }
+
+        .form-control[readonly]{
+            background-color: #fff;
+        }
+        #search_station:hover{
+            cursor: pointer;
+        }
+        
+        .delete{
+            color: red;
+        }
+
+        i:hover{
+            cursor: pointer;
+        }
+        td:last-child{
+            border-left: 1px solid #dee2e6;
+            width: 90px;
+        }
+        .table thead th{
+            vertical-align: middle;
+        }
+        .chacked{
+            position: relative;
+            justify-content: end;
+            align-items: center;
+            display: flex;
+            width: 100%;
+    
+        }
+        .chacked::before{
+            /* --myvar: #D92B2C; */
+            z-index: 1;
+            content: '';
+            content: '';
+            width: 10px;
+            height: 10px;
+            background-color: var(--myvar);
+            position: absolute;
+            /* top: 0; */
+            /* display: flex; */
+            right: 10;
+            margin-right: 10px;
+            border-radius: 50%;
+        }
+        #role{
+            display: none;
+        }
+
+
+        @media screen and (max-width: 768px) {
+            .table{
+                display: none;
+            }
+            #role{
+                display: flex;
+            }
+        }
+        .list_clients{
+            margin-top: 10px;
+        }
+
+        .list_clients i{
+            font-size: 13px;
+    margin-left: 7px;
+        }
+        .list-group-item{
+            margin-bottom: 0px;
+        }
+        .list_clients a:hover{
+            background-color: #e7e7e7;
+            color: #000;
+        }
+
+    input[type="time"]::-webkit-calendar-picker-indicator { background: none; display:none; }
+    </style>
+</head>
+<body>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+
+    <%- include("navigation",{href :`${href}`}) %>
+    <header style="max-width: 900px; max-height: 100%; overflow:auto; margin: 30px auto; padding: 0px 5px 0px 5px;">
+        <ul class="nav nav-tabs d-flex justify-content-center" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Добавить игрока</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Мероприятие</button>
+        </li>
+
+      </ul>
+
+      <!-- Добавить игрока -->
+      <div class="tab-content border-bottom" id="myTabContent">
+        <div class="tab-pane fade show active mt-3 mb-3 p-1" id="home" role="tabpanel" aria-labelledby="home-tab">
+            <div class="input-group  mb-3">
+                <span class="input-group-text" id="inputGroup-sizing-sm">ФИО</span>
+                <input id="fullname" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Номер телефона</span>
+                <input id="online_phone" name="phone" type="tel" maxlength="50"
+         required="required"
+         value="+7(___)___-__-__"
+         pattern="\+7\s?[\(]{0,1}9[0-9]{2}[\)]{0,1}\s?\d{3}[-]{0,1}\d{2}[-]{0,1}\d{2}"
+         placeholder="+7(___)___-__-__" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Кол-во монет</span>
+                <input type="number" id="coins" value="1000" min="0" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+            </div>
+
+            <div class="bottom-btn d-flex justify-content-between pl-3 pr-3">
+                <button type="button" class="btn btn-danger" id="clear">Очистить</button>
+                <button type="button" class="btn btn-success" id="addNewClient">Добавить</button>
+            </div>
+        </div>
+
+
+        <!-- Мероприятние -->
+        <div class="tab-pane fade mt-3 mb-3 p-1" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+            
+            <div class="d-flex mb-3 justify-content-center">
+                <button type="button" class="btn btn-start" id="start_game">Начать игру!</button>
+            </div>
+            <div class="input-group  mb-3">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Время встречи</span>
+                <input type="time" value="<%= metro.time%>" id="time" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+            </div>
+            <div class="input-group mb-3 chacked" id="input_color" style="--myvar:<%= metro.hex%>;">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Станция метро</span>
+                <!-- <input type="text" name="search_station" id="search_station" class="form-control" placeholder="Поиск"> -->
+                <input type="text" data-hex="<%= metro.hex%>" maxlength="30" readonly="readonly" name="search_station" id="metro_station" class="form-control" value="<%= metro.station %>" aria-describedby="validationServer03Feedback" >
+            </div>
+            <span class="mb-3 justify-content-center" style="display:none; text-align: center; color: green;" id="statusChange">Изменения были сохранены!</span>
+
+            <div class="bottom-btn d-flex justify-content-between pl-3 pr-3">
+                <button type="button" style="color: white;" class="btn btn-danger" id="delete-merop">Удалить</button>
+                <button type="button" class="btn btn-primary set-role">Дать роли</button>
+                <button type="button" class="btn btn-success" id="saveNewParams">Сохранить</button>
+            </div>
+        </div>
+        
+      </div>
+
+      <table class="table table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">ФИО</th>
+            <th scope="col">Номер телефона</th>
+            <th scope="col">Монет</th>
+            <th scope="col">Роль</th>
+            <th scope="col"><button type="button" class="btn btn-primary set-role">Распределить</button></th>
+          </tr>
+        </thead>
+        <tbody>
+            
+         
+        </tbody>
+      </table>
+
+      <div class="list_clients">
+        <div class="list-group list-group-numbered">
+            
+        </div>
+      </div>
+    </header>
+
+    <div class="modal fade" id="metro_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Выберите станцию метро</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="search">
+                <!-- <input type="text" name="search_station" id="search_station" class="form-control" placeholder="Поиск"> -->
+                <input type="text" maxlength="30" name="search_station" id="search_station" class="form-control" id="floatingInputInvalid" placeholder="Поиск" aria-describedby="validationServer03Feedback" required>
+  
+                <div id="validationServer03Feedback" class="invalid-feedback">
+                  Выберите станцию метро
+                </div>
+              </div>
+              
+              <div class="list">
+                <div class="station">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close_metro">Отмена</button>
+              <button type="button" class="btn btn-primary" id="select_metro">Выбрать</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="startGame" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Начинаем игру!</h5>
+              <button type="button" class="close close-modal-game" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body d-flex justify-content-center align-items-center pt-3 pb-3">
+                <form class="form-floating" style="width: 90%;">
+                <input type="time" class="form-control" id="time_game">
+                <label for="floatingInputValue">Укажите время начала игры</label>
+                </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary close-modal-game" data-dismiss="modal">Отмена</button>
+              <button type="button" class="btn btn-primary" id="start">Выбрать</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+
+//         (function(){
+//             if(!!window.performance && window.performance.navigation.type === 2)
+// {
+//     console.log('Reloading');
+//     window.location.reload();
+// }
+//         })();
+        const colorRole = {
+            'Мафия':'red',
+            'Мирный житель':'green',
+            'Комиссар':'blue'
+        }
+
+        
+
+        $(document).ready(async function(){
+            var jsonData = '<%- JSON.stringify(data) %>';
+            var metro = '<%- JSON.stringify(metro) %>';
+            var data = JSON.parse(jsonData);
+            //const id = document.location.pathname.split('/')
+            addClients(data)
+            console.log(metro);
+            
+
+            document.querySelector('#online_phone').addEventListener('paste',(event)=>{
+                let paste = (event.clipboardData || window.clipboardData).getData('text');
+                paste = paste.replace(/\s|-/g,'');
+                if(paste.search(/[a-zA-Zа-яА-Я]/g) != -1){
+                    event.target.classList.add("is-invalid")
+                    event.target.value = '+7';
+                    return;
+                }
+
+                if(paste.length ==11 && paste[0] == '8'){
+                    paste = paste.substr(1);
+                    
+                }
+                if(paste.length ==12 && paste[0] == '+' && paste[1] == '7'){
+                    paste = paste.substr(2);
+                }
+                event.target.value = '+7'+paste;
+                event.target.classList.remove("is-invalid")
+                // console.log(paste);
+            });
+
+
+
+
+            let metrolist = await $.getJSON('/static/Calendar 04_files/metro.json');
+            //$('#coins').click(()=>{console.log(data);})
+            renderStation('',metrolist)
+            //Модальное окно для метро
+            $('#metro_station').click(()=>{
+                $('#metro_modal').modal('show')
+            })
+            $('#search_station').on('keyup',function(){
+                var $this = $(this),
+                    val = $this.val().toLowerCase();
+
+                
+                renderStation(val, metrolist)
+                
+            });
+            $('#metro_station').click(()=>{
+                $('#metro_modal').modal('show')
+            })
+            $('#search_station').on('click',function(){
+                $('.is-invalid').removeClass("is-invalid");
+                
+            });
+            $('#close_metro').click(()=>{
+                $('#metro_modal').modal('hide');
+                //$('#metro_station').val("")
+            })
+            $('#select_metro').click(()=>{
+                
+                if($('#metro_station').val().trim().length===0 || $('#search_station').data("id") == undefined || metrolist[$('#search_station').data("id")].name != $('#search_station').val()){
+                    $('.chacked').removeClass('chacked')
+                    $('#search_station').addClass("is-invalid");
+                    return;
+                }
+                //console.log("м."+metro[$('#search_station').data("id")].name);
+                $('#metro_modal').modal('hide');
+            })
+            $(document).on('click', '.station', function()
+            {
+                let data = metrolist[$(this).data('id')];
+                console.log($(this).data('id'));
+                $('#search_station').val(data.name)
+                $('#search_station').data("id",$(this).data('id'))
+                $('.search').addClass('chacked')
+                $('.chacked').css('--myvar',data.hex)
+                //$('.search').addClass('chacked')
+                
+                //$('#search_station').data(data.name)
+                $('.is-invalid').removeClass("is-invalid");
+                $('.modal-body .list').html(`<div class="station" data-id="${$(this).data('id')}">
+                <div style="background-color: ${data.hex};"></div>
+                <span>${data.name}</span>
+            </div>`)
+            $('#metro_station').val("м."+data.name)
+            $('#metro_station').data("hex", data.hex)
+            });
+            //-- end modal
+
+            $('#saveNewParams').click(()=>{
+                let time = $('#time').val();
+                let station = $('#metro_station').val();
+                let hex = $('#metro_station').data('hex')
+                let id = document.location.pathname.split('/')
+                console.log(time,station);
+
+                fetch(`/timetable/changedata`, {
+                    method:'PUT',
+                    headers: {
+                        'Content-Type': 'application/json;charset=utf-8'
+                    },
+                    body:JSON.stringify({
+                        id: id[id.length-1],
+                        time:time,
+                        station:station,
+                        hex:hex
+                    })
+                }).then((res)=>{
+                    if(!res.ok){
+                        throw error;
+                    }
+                    console.log(res.ok);
+                    $('#statusChange').css({'display':'flex','color':'green'})
+                    $('#statusChange').text('Изменения были сохранены!')
+                    setTimeout(()=>{
+                        $('#statusChange').css({'display':'none','color':'red'})
+                    },1000)
+                })
+                .catch(()=>{
+                    $('#statusChange').css({'display':'flex','color':'red'})
+                    $('#statusChange').text('Ошибка сервера!')
+                })
+
+                
+            })
+
+            $('#start_game').click(()=>{
+                let countCheck = data.filter(res=>(res.role != '' && res.role))
+                let id = document.location.pathname.split('/');
+                id = id[id.length-1]
+                if(countCheck.length == data.length){
+                    $("#startGame").modal('show')
+                    console.log(`id: ${id}\n time:`);
+                }else{
+                    $('#statusChange').css({'display':'flex','color':'red'})
+                    $('#statusChange').text('Ошибка! Для того чтобы начать игру, дайте игрокам роли в игре!')
+                }
+            })
+
+            $('.close-modal-game').click(()=>{
+                $("#startGame").modal('hide')
+            })
+
+            $('#start').click(()=>{
+                let time = $("#time_game").val();
+                if(time){
+                    let timeData = time.split(':');
+                    let hour = timeData [0];
+                    let min = timeData [1];
+                    let id = document.location.pathname.split('/');
+                    id = id[id.length-1]
+                    let timeSend = new Date().setHours(hour,min, 0);
+
+                    fetch(`/startGame`, {
+                        method:'POST',
+                        headers: {
+                            'Content-Type': 'application/json;charset=utf-8'
+                        },
+                        body:JSON.stringify({
+                            id: id,
+                            time:timeSend,
+                        })
+                    }).then((res)=>{
+                        if(!res.ok){
+                            throw error;
+                        }
+                        location.href = '/game'
+                    })
+                    .catch(()=>{
+                        $("#startGame").modal('hide')
+                        $('#statusChange').css({'display':'flex','color':'red'})
+                        $('#statusChange').text('Ошибка сервера! Либо уже есть созданая игра!')
+                    })
+
+                    console.log(new Date(timeSend));
+                }else{
+                    $("#time_game").addClass('is-invalid')
+                }
+                
+            })
+
+            $(document).on('click', '.delete', (datas)=>{
+                let id = datas.target.getAttribute('data-id');
+                let del = confirm('Вы хотите удалить данного игрока?')
+                if(!del){
+                    return;
+                }
+                let i = datas.target.getAttribute('data-i');
+                data = data.filter((res)=>(res!=data[i]));
+                
+
+                let dataSend = [];
+                data.map((res, i)=>{
+                    res.role = '';
+                    dataSend.push({
+                        id: res.id,
+                        role:''
+                    })
+                })
+                fetch(`/timetable/setrole`, {
+                    method:'POST',
+                    headers: {
+                        'Content-Type': 'application/json;charset=utf-8'
+                    },
+                    body:JSON.stringify({data: dataSend})
+                })
+
+                fetch(`/timetable/delete/${id}`, {
+                    method:'DELETE',
+                })
+                addClients(data)
+            })
+
+            $('.change').click((data)=>{
+                console.log(data.target.getAttribute('data-id'));
+            })
+
+            $(document).on('change', '.table tbody tr td', function(){
+                console.log($(this).parent()[0].getAttribute('data-id'));
+            })
+
+            $('#clear').click(()=>{
+                clear()
+            })
+
+            $('#myTabContent input').keyup((input)=>{
+                input.target.classList.remove('is-invalid')
+            })
+
+            $('#delete-merop').click(()=>{
+                let del = confirm('При удалении данного мероприятия будут удалены все данные!')
+                if(del){
+                    document.location = "/timetable/delete/group/<%= metro.id %>";
+                }
+                return;
+            })
+
+            $('.set-role').click(()=>{
+
+                
+                let coefficient = {
+                    mafia: 0.3,
+                    police:0.1,
+                    people: 0.6
+                }
+                let sum = (Math.round(data.length *coefficient.mafia)+Math.round(data.length *coefficient.people)+Math.round(data.length *coefficient.police))
+                let mafia =Math.round(data.length *coefficient.mafia);
+                let police = Math.round(data.length *coefficient.police);
+                let role = [
+                    {count: mafia, role:'Мафия'},
+                    {count: data.length-(mafia+police), role:'Мирный житель'},
+                    {count: police, role:'Комиссар'},
+                    //{sum: sum}
+                ]
+                let listRole = randomArray(new Array(mafia).fill('Мафия').concat(new Array(police).fill('Комиссар').concat(new Array(data.length-(mafia+police)).fill('Мирный житель'))));
+                let dataSend = [];
+                data.map((res, i)=>{
+                    res.role = listRole[i];
+                    dataSend.push({
+                        id: res.id,
+                        role:listRole[i]
+                    })
+                })
+                fetch(`/timetable/setrole`, {
+                    method:'POST',
+                    headers: {
+                        'Content-Type': 'application/json;charset=utf-8'
+                    },
+                    body:JSON.stringify({data: dataSend})
+                })
+                addClients(data)
+                console.log(data);
+                // role.map(data=>{
+                //     if(data.count != 0){
+                //         for (let index = 0; index < array.length; index++) {
+                //             const element = array[index];
+                            
+                //         }
+                //     }
+                // })
+            })
+
+            $('#addNewClient').click(()=>{
+                const coins = $('#coins').val();
+                const tel = $('#online_phone').val();
+                let fullname = $('#fullname').val().trim().replace(/[ ]{6,}/, ' ').toLowerCase();
+                let id = document.location.pathname.split('/')
+                if(tel.replace(/\D/g, "").length != 11 && fullname.length == 0 && (coins==0 || coins=='') ){
+                    $('#fullname').addClass('is-invalid')
+                    $('#online_phone').addClass('is-invalid')
+                    $('#coins').addClass('is-invalid')
+                    return;
+                }
+                if(fullname.length == 0 || fullname.split(' ').length == 1){
+                    $('#fullname').addClass('is-invalid')
+                    return;
+                }
+                if(tel.replace(/\D/g, "").length != 11){
+                    $('#online_phone').addClass('is-invalid')
+                    return;
+                }
+                if(coins==0 || coins==''){
+                    $('#coins').addClass('is-invalid')
+                    return;
+                }
+                
+                fullname = fullname.split(' ').map(word => word[0].toUpperCase() + word.substring(1)).join(' ')
+                data.push({
+                    fullname:fullname,
+                    coins:coins,
+                    phone:tel,
+                    id:23
+                })
+
+                if(data.find(res=>(res.role!='' || res.role != undefined)) != undefined){
+                    let dataSend = [];
+                    data.map((res, i)=>{
+                        res.role = '';
+                        dataSend.push({
+                            id: res.id,
+                            role:''
+                        })
+                    })
+                    fetch(`/timetable/setrole`, {
+                        method:'POST',
+                        headers: {
+                            'Content-Type': 'application/json;charset=utf-8'
+                        },
+                        body:JSON.stringify({data: dataSend})
+                    })
+                }
+
+                fetch(`/timetable/${id[id.length-1]}`, {
+                    method:'POST',
+                    headers: {
+                        'Content-Type': 'application/json;charset=utf-8'
+                    },
+                    body:JSON.stringify({
+                        "fullname": fullname,
+                        "phone": tel,
+                        "coins": coins,
+                    })
+                })
+                location.reload()
+                //console.log([coins,tel,fullname]);
+            })
+            
+        })
+
+        function renderStation(val, metro){
+            var opt = '';
+            metro.map((data, num)=>{
+                if(data.name.toLowerCase().match(val)!=null && data.name.toLowerCase().match(val).index==0){
+                    opt += (`<div class="station" data-id="${num}">
+                    <div style="background-color: ${data.hex};"></div>
+                    <span>${data.name}</span>
+                </div>`)
+                console.log(data.name);
+                }
+            })
+            
+            if(opt){
+                $('.modal-body .list').html(opt)
+            }else{
+                $('.modal-body .list').html("Ничего не найдено!")
+            }
+        }
+
+        function randomArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+        }
+
+        function getRandomRole(data, role,){
+            if(role[3].sum == 1){
+                let num = role[0].count !=0 ? 0 : (role[1].count != 0? 1: 2)
+                console.log(num);
+                data.role = role[num].role;
+                --role[num].count;
+            }
+            let num = randomInteger(0,2);
+            
+            if(role[num].count !=0){
+                data.role = role[num].role;
+                --role[num].count;
+                --role[3].sum;
+            }else{
+                getRandomRole(data,role);
+            }
+        }
+
+        function randomInteger(min, max) {
+        // получить случайное число от (min-0.5) до (max+0.5)
+        let rand = min - 0.5 + Math.random() * (max - min + 1);
+        return Math.round(rand);
+        }
+
+        function clear(){
+            $('#coins').val("1000");
+                $('#online_phone').val("");
+                $('#fullname').val("")
+        }
+
+        function addClients(data){
+            if(data.length != 0){
+                if($('.table').css('display') == 'none'){
+                    $('.list_clients .list-group').html('')
+                    data.map((result, i)=>{
+                    $('.list_clients .list-group').append(`
+                    <a href="/timetable/change/${result.id}" class="list-group-item d-flex justify-content-between align-items-start">
+                    
+                        <div class="ms-2 me-auto">
+                            <div class="fw-bold" style="font-size: 0.9em;">${++i}. ${result.fullname}</div>
+                            <div style="display: flex;flex-direction: column;line-height: 23px;">
+                                <span>
+                                    Номер: ${result.phone}
+                                </span>
+                                <span>
+                                    Роль: <span style='${result.role ? ('color:'+colorRole[result.role]+'; ') : 'color: #000'}'>${result.role ? result.role : '-----'}</span>
+                                </span>
+                            </div>
+                        </div>
+                        <span class="badge bg-primary rounded-pill pr-2 pl-2">${result.coins}<i class="fas fa-coins"></i></span>
+                    </a>
+                    `)
+                    })
+                }
+                $('.table tbody').html('')
+                data.map((result, i)=>{
+                    //i++;
+                $('.table tbody').append(`
+                    <tr data-id="${result.id}">
+                            <th scope="row">${++i} </th>
+                            <td>${result.fullname} </td>
+                            <td>${result.phone} </td>
+                            <td>${result.coins} </td>
+                            <td style='${result.role ? ('color:'+colorRole[result.role]+'; font-weight: bold;') : 'color: #000'}'>${result.role ? result.role : '-----'}</td>
+                            <td>
+                                <div class="d-flex justify-content-around pr-1 pl-1 align-items-baseline">
+                                    <a href="/timetable/change/${result.id}"><i class="fas fa-user-edit change fs-5" data-id="${result.id}"></i></a>
+                                    <i class="fas fa-trash-alt delete fs-5" data-id="${result.id}" data-i="${--i}"></i>
+                                </div>
+                            </td>
+                        </tr>
+                    `) 
+                })
+            }else{
+                if($('.table').css('display') == 'none'){
+                    $('.list_clients .list-group').html(`
+                    
+                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                        <div class="ms-2 me-auto">
+                            <div class="fw-bold" style="font-size: 0.9em;">
+                                На данный момент игроков в базе данных нет.
+                            </div>
+                            
+                        </div>
+                        
+                    </li>
+                    `)
+                }
+                $('.table tbody').append(`
+                <tr>
+                    <th colspan="5">На данный момент игроков в базе данных нет.</th>
+                </tr>
+                `)
+            }
+        }
+
+        function setCursorPosition(pos, e) {
+          //e.focus();
+          if (e.setSelectionRange) e.setSelectionRange(pos, pos);
+          else if (e.createTextRange) {
+            var range = e.createTextRange();
+            range.collapse(true);
+            range.moveEnd("character", pos);
+            range.moveStart("character", pos);
+            range.select()
+          }
+        }
+      
+        function mask(e) {
+          //console.log('mask',e);
+          var matrix = this.placeholder,// .defaultValue
+              i = 0,
+              def = matrix.replace(/\D/g, ""),
+              val = this.value.replace(/\D/g, "");
+          def.length >= val.length && (val = def);
+          matrix = matrix.replace(/[_\d]/g, function(a) {
+            return val.charAt(i++) || "_"
+          });
+          this.value = matrix;
+          i = matrix.lastIndexOf(val.substr(-1));
+          i < matrix.length && matrix != this.placeholder ? i++ : i = matrix.indexOf("_");
+          setCursorPosition(i, this)
+        }
+        window.addEventListener("DOMContentLoaded", function() {
+          var input = document.querySelector("#online_phone");
+          input.addEventListener("input", mask, false);
+          //input.focus();
+          setCursorPosition(3, input);
+        });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <title>Document</title>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        body{
+            display: flex;
+            flex: 1;
+            width: 100vw;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            background-color: #f5f5f5;
+        }
+        .block{
+            
+            background-color: #fff;
+            padding: 1rem;
+            display: flex;
+            flex-flow: column nowrap;
+
+            align-items: center;
+            border: solid 1px #e8e8e8;
+            border-radius: 15px;
+        }
+
+        .block span{
+            font-size: 23px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #7e0cf5;
+        }
+
+        .block input{
+            margin-bottom: 20px;
+            width: 20rem;
+        }
+
+        .block form{
+            display: flex;
+            flex-flow: column nowrap;
+
+            align-items: center;
+        }
+
+        .block button{
+            width: 60%;
+        }
+
+        .btn{
+            background-color: #7e0cf5;
+            color: white;
+        }
+        .btn:hover{
+
+            color: white;
+            background-color: #6a0dce;
+        }
+    </style>
+</head>
+<body id="video1">
+    <div class="block">
+        <span>Авторизация</span>
+        <form action="/" method="post">
+            <input type="text" class="form-control" placeholder="Логин" aria-label="Username" name="login">
+            <input type="password" class="form-control" placeholder="Пароль" aria-label="Password" name="password">
+            <input type="submit" class="btn" value="Вход">
+        </form>
+        <input type="submit" id="bb" value="Вход">
+        
+    </div>
+    <script defer>
+        function fullScreen(element) {
+  if(element.requestFullscreen) {
+    element.requestFullscreen();
+  } else if(element.webkitrequestFullscreen) {
+    element.webkitRequestFullscreen();
+  } else if(element.mozRequestFullscreen) {
+    element.mozRequestFullScreen();
+  }
+}
+document.querySelector('#bb').onclick = ()=>{
+    var html = document.documentElement;
+fullScreen(html);
+}
+
+    </script>
+</body>
+</html>
